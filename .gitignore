@@ -23,3 +23,7 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+###> config IDE
+.vscode/
+###< config IDE
