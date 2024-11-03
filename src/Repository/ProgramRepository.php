@@ -16,6 +16,22 @@ class ProgramRepository extends ServiceEntityRepository
         parent::__construct($registry, Program::class);
     }
 
+    public function findThreeCategoryDesc(int $id): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT * FROM program p
+            WHERE p.category_id = :id
+            ORDER BY p.id DESC
+            LIMIT 3
+            ';
+
+        $resultSet = $conn->executeQuery($sql, ['id' => $id]);
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $resultSet->fetchAllAssociative();
+    }
     //    /**
     //     * @return Program[] Returns an array of Program objects
     //     */

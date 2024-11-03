@@ -18,17 +18,17 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         [
             'title' => 'Titre 2',
             'synopsis' => 'some texte',
-            'category' => 'category_Aventure',
+            'category' => 'category_Action',
         ],
         [
             'title' => 'Titre 3',
             'synopsis' => 'some texte',
-            'category' => 'category_Animation',
+            'category' => 'category_Action',
         ],
         [
             'title' => 'Titre 4',
             'synopsis' => 'some texte',
-            'category' => 'category_Fantastique',
+            'category' => 'category_Action',
         ],
         [
             'title' => 'Titre 5',
