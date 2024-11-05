@@ -16,6 +16,7 @@ class SeasonRepository extends ServiceEntityRepository
         parent::__construct($registry, Season::class);
     }
 
+   
     //    /**
     //     * @return Season[] Returns an array of Season objects
     //     */

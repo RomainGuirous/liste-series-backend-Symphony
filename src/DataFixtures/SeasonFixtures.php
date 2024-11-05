@@ -13,43 +13,43 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface
         [
             'number' => '1',
             'year' => '2021',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Invincible'
         ],
         [
             'number' => '2',
             'year' => '2023',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Invincible'
         ],
         [
             'number' => '1',
             'year' => '2005',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Avatar_TLAB'
         ],
         [
             'number' => '2',
             'year' => '2006',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Avatar_TLAB'
         ],
         [
             'number' => '3',
             'year' => '2007',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Avatar_TLAB'
         ],
         [
             'number' => '1',
             'year' => '1999',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Spaced'
         ],
         [
             'number' => '2',
             'year' => '2001',
-            'description' => 'some texte',
+            'description' => 'Description : topo de la saison',
             'program' => 'Spaced'
         ]
 

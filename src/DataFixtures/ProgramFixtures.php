@@ -12,17 +12,17 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     const PROGRAMS = [
         [
             'title' => 'Invincible',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de la série',
             'category' => 'category_Action',
         ],
         [
             'title' => 'Avatar_TLAB',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de la série',
             'category' => 'category_Animation',
         ],
         [
             'title' => 'Spaced',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de la série',
             'category' => 'category_Humour',
         ]
 

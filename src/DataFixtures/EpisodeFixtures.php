@@ -12,21 +12,21 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
     const EPISODES = [
         [
             'title' => 'Episode ',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de l\'épisode',
             'number' => '8',
             'season' => '2',
             'program' => 'Invincible'
         ],
         [
             'title' => 'Episode ',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de l\'épisode',
             'number' => '20',
             'season' => '3',
             'program' => 'Avatar_TLAB'
         ],
         [
             'title' => 'Episode ',
-            'synopsis' => 'some texte',
+            'synopsis' => 'Synopsis : topo de l\'épisode',
             'number' => '7',
             'season' => '2',
             'program' => 'Spaced'
