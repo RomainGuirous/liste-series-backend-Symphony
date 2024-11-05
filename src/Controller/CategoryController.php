@@ -44,7 +44,6 @@ class CategoryController extends AbstractController
             [
                 'programs' => $programs,
                 'categoryName' => $categoryName,
-                'dumpcate' => $categoryId
             ]
         );
     }

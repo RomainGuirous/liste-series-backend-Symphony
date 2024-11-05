@@ -11,41 +11,32 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
     const PROGRAMS = [
         [
-            'title' => 'Titre 1',
+            'title' => 'Invincible',
             'synopsis' => 'some texte',
             'category' => 'category_Action',
         ],
         [
-            'title' => 'Titre 2',
+            'title' => 'Avatar_TLAB',
             'synopsis' => 'some texte',
-            'category' => 'category_Action',
+            'category' => 'category_Animation',
         ],
         [
-            'title' => 'Titre 3',
+            'title' => 'Spaced',
             'synopsis' => 'some texte',
-            'category' => 'category_Action',
-        ],
-        [
-            'title' => 'Titre 4',
-            'synopsis' => 'some texte',
-            'category' => 'category_Action',
-        ],
-        [
-            'title' => 'Titre 5',
-            'synopsis' => 'some texte',
-            'category' => 'category_Horreur',
+            'category' => 'category_Humour',
         ]
 
     ];
 
     public function load(ObjectManager $manager)
     {
-        foreach(self::PROGRAMS as $programName)  {  
+        foreach (self::PROGRAMS as $programName) {
             $program = new Program();
             $program->setTitle($programName['title']);
             $program->setSynopsis($programName['synopsis']);
             $program->setCategory($this->getReference($programName['category']));
             $manager->persist($program);
+            $this->addReference('program_' . $programName['title'], $program);
         }
         $manager->flush();
     }
