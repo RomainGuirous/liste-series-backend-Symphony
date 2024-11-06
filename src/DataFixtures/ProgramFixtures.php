@@ -6,38 +6,26 @@ use App\Entity\Program;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-    const PROGRAMS = [
-        [
-            'title' => 'Invincible',
-            'synopsis' => 'Synopsis : topo de la série',
-            'category' => 'category_Action',
-        ],
-        [
-            'title' => 'Avatar_TLAB',
-            'synopsis' => 'Synopsis : topo de la série',
-            'category' => 'category_Animation',
-        ],
-        [
-            'title' => 'Spaced',
-            'synopsis' => 'Synopsis : topo de la série',
-            'category' => 'category_Humour',
-        ]
-
-    ];
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        foreach (self::PROGRAMS as $programName) {
+        $faker = Factory::create();
+
+        // L'objectif est de créer 10 séries qui appartiendront à une catégorie au hasard
+        for($i = 1; $i <= 10; $i++) {
             $program = new Program();
-            $program->setTitle($programName['title']);
-            $program->setSynopsis($programName['synopsis']);
-            $program->setCategory($this->getReference($programName['category']));
+            $program->setTitle($faker->words(3, true));
+            $program->setSynopsis($faker->paragraphs(2, true));
+            $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 5)));
+
             $manager->persist($program);
-            $this->addReference('program_' . $programName['title'], $program);
+            $this->addReference('program_' . $i, $program);
         }
+
         $manager->flush();
     }
 

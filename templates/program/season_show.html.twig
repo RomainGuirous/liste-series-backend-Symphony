@@ -16,7 +16,7 @@
         <h3>Liste des épisodes</h3>
         <ul>
             {% for episode in episodes %}
-                <li>{{ episode.title }}</li>
+                <li>Episode {{loop.index}} ) {{ episode.title }}</li>
             {% endfor %}
         </ul>
     </article>

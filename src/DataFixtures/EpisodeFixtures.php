@@ -6,48 +6,30 @@ use App\Entity\Episode;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
-    const EPISODES = [
-        [
-            'title' => 'Episode ',
-            'synopsis' => 'Synopsis : topo de l\'épisode',
-            'number' => '8',
-            'season' => '2',
-            'program' => 'Invincible'
-        ],
-        [
-            'title' => 'Episode ',
-            'synopsis' => 'Synopsis : topo de l\'épisode',
-            'number' => '20',
-            'season' => '3',
-            'program' => 'Avatar_TLAB'
-        ],
-        [
-            'title' => 'Episode ',
-            'synopsis' => 'Synopsis : topo de l\'épisode',
-            'number' => '7',
-            'season' => '2',
-            'program' => 'Spaced'
-        ],
-
-    ];
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        foreach (self::EPISODES as $episodeName) {
-            for ($i = 1; $i <= $episodeName['season']; $i++) {
-                for ($j = 1; $j <= $episodeName['number']; $j++) {
+        $faker = Factory::create();
+
+        // L'objectif est de créer 10 épisodes par saisons (50) => 500 épisodes
+        for ($j = 1; $j <= 5; $j++) {
+            for ($i = 1; $i <= 10; $i++) {
+                $season = 'season' . $j . '_program' . $i;
+                for ($k = 1; $k <= 10; $k++) {
                     $episode = new Episode();
-                    $episode->setTitle($episodeName['title'] . '_' . $j);
-                    $episode->setSynopsis($episodeName['synopsis']);
-                    $episode->setNumber($j);
-                    $episode->setSeason($this->getReference('season' . $i . '_' . $episodeName['program']));
+                    $episode->setSeason($this->getReference($season));
+                    $episode->setTitle($faker->sentence(3));
+                    $episode->setSynopsis($faker->sentence());
+                    $episode->setNumber($k);
+
                     $manager->persist($episode);
                 }
             }
         }
+
         $manager->flush();
     }
 
