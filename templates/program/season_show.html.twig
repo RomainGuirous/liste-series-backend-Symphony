@@ -4,7 +4,7 @@
 
 {% block body %}
     <article>
-        <h1>{{ program.title }} : Saison {{ season }}</h1>
+        <h1>{{ program.title }} : Saison {{ season.number }}</h1>
 
         <h3>Infos {{ program.title }} :</h3>
         <ul>
@@ -16,7 +16,11 @@
         <h3>Liste des épisodes</h3>
         <ul>
             {% for episode in episodes %}
-                <li>Episode {{loop.index}} ) {{ episode.title }}</li>
+                <li>
+                    <a href="{{ path('program_episode_show', { program: program.id , season: season.id , episode: episode.id }) }}">
+                        Episode {{loop.index}} ) {{ episode.title }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     </article>
