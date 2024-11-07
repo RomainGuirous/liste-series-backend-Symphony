@@ -10,4 +10,10 @@
         <a href="{{ path("category_show", { categoryName: category.name }) }}">Voir les films de la catégorie {{category.name}}</a>
     {% endfor %}
 
+    <h1>
+        <a href="{{ path("category_new") }}">
+            Ajouter une catégorie
+        </a>
+    </h1>
+
 {% endblock body %}
