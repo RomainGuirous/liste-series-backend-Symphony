@@ -47,7 +47,10 @@ class ProgramController extends AbstractController
             // For example : persiste & flush the entity
             // And redirect to a route that display the result
 
+            //sauvegarde nouvelle entité
             $entityManager->persist($program);
+
+            //execute insertion en BDD
             $entityManager->flush();
 
             // Redirect to categories list
