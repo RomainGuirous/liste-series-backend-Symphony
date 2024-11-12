@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Categorie : {{ categoryName }}{% endblock %}
+{% block title %}Categorie : {{ category.name }}{% endblock %}
 
 {% block body %}
-    <h1>Categorie : {{ categoryName }}</h1>
+    <h1>Categorie : {{ category.name }}</h1>
     {% if programs %}
         <article>
             {% for program in programs %}
@@ -24,4 +24,6 @@
     <a href="{{ path('category_index') }}">
         Retour à la liste des catégories
     </a>
+
+    {{ include('category/_delete_form.html.twig') }}
 {% endblock %}

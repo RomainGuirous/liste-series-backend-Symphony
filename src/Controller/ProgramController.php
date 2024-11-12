@@ -54,6 +54,9 @@ class ProgramController extends AbstractController
             //execute insertion en BDD
             $entityManager->flush();
 
+            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+            $this->addFlash('success', 'The new program has been created');
+            
             // Redirect to categories list
             return $this->redirectToRoute('program_index');
         }
@@ -80,6 +83,20 @@ class ProgramController extends AbstractController
             'program' => $program,
             'seasons' => $seasons
         ]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Program $program, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$program->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($program);
+            $entityManager->flush();
+        }
+
+        // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+        $this->addFlash('danger', 'The program has been deleted');
+
+        return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
     }
 
     //affichage d'une saison, ses infos et ses épisodes

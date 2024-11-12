@@ -49,6 +49,9 @@ class CategoryController extends AbstractController
             $entityManager->persist($category);
             $entityManager->flush();
 
+            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+            $this->addFlash('success', 'The new category has been created');
+            
             // Redirect to categories list
             return $this->redirectToRoute('category_index');
         }
@@ -80,8 +83,24 @@ class CategoryController extends AbstractController
             'category/show.html.twig',
             [
                 'programs' => $programs,
-                'categoryName' => $categoryName,
+                'category' => $category,
             ]
         );
+    }
+
+    #[Route('/{categoryName}', name: 'delete', methods: ['POST'])]
+    public function delete(string $categoryName, CategoryRepository $categoryRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $category = $categoryRepository->findOneByName($categoryName);
+
+        if ($this->isCsrfTokenValid('delete'.$category->getName(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($category);
+            $entityManager->flush();
+        }
+
+        // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+        $this->addFlash('danger', 'The category has been deleted');
+
+        return $this->redirectToRoute('category_index', [], Response::HTTP_SEE_OTHER);
     }
 }
