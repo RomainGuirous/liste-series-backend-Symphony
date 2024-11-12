@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\ProgramType;
 
+
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
@@ -42,7 +43,7 @@ class ProgramController extends AbstractController
         $form->handleRequest($request);
 
         // Was the form submitted ?
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             // Deal with the submitted data
             // For example : persiste & flush the entity
             // And redirect to a route that display the result
