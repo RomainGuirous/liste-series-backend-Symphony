@@ -5,8 +5,6 @@ namespace App\Controller;
 use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
-use App\Repository\EpisodeRepository;
-use App\Repository\SeasonRepository;
 use App\Repository\ProgramRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,7 +54,7 @@ class ProgramController extends AbstractController
 
             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
             $this->addFlash('success', 'The new program has been created');
-            
+
             // Redirect to categories list
             return $this->redirectToRoute('program_index');
         }
@@ -69,15 +67,10 @@ class ProgramController extends AbstractController
 
     //affichage d'une série, avec ses infos et ses saisons
     #[Route('/{id}', methods: ['GET'], name: 'show')]
-    public function show(int $id, Program $program, SeasonRepository $seasonRepository): Response
+    public function show(Program $program): Response
     {
-        //obtient un programme selon son id
-        // $program = $programRepository->findOneById($id);
-        // $program = $programRepository->findOneBy(['id' => $id]);
-        // $program = $programRepository->find($id);
-
-        //obtient les saison d'une série
-            $seasons = $seasonRepository->findByProgram($id);
+        //obtient les saisons d'une série
+        $seasons = $program->getSeasons();
 
         return $this->render('program/show.html.twig', [
             'program' => $program,
@@ -88,7 +81,7 @@ class ProgramController extends AbstractController
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Program $program, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$program->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($program);
             $entityManager->flush();
         }
@@ -101,10 +94,10 @@ class ProgramController extends AbstractController
 
     //affichage d'une saison, ses infos et ses épisodes
     #[Route('/{program}/season/{season}', methods: ['GET'], name: 'season_show')]
-    public function showSeason(Program $program, Season $season, EpisodeRepository $episodeRepository): Response
+    public function showSeason(Program $program, Season $season): Response
     {
         //obtention des épisodes
-        $episodes = $episodeRepository->findBySeason($season->getId());
+        $episodes = $season->getEpisodes();
 
         return $this->render('program/season_show.html.twig', [
             'program' => $program,
@@ -113,15 +106,14 @@ class ProgramController extends AbstractController
         ]);
     }
 
-     //affichage d'un épisode avec ses infos
-     #[Route('/{program}/season/{season}/episode{episode}', methods: ['GET'], name: 'episode_show')]
-     public function showEpisode(Program $program, Season $season, Episode $episode): Response
-     {
- 
-         return $this->render('program/episode_show.html.twig', [
-             'program' => $program,
-             'episode' => $episode,
-             'season' => $season
-         ]);
-     }
+    //affichage d'un épisode avec ses infos
+    #[Route('/{program}/season/{season}/episode{episode}', methods: ['GET'], name: 'episode_show')]
+    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    {
+        return $this->render('program/episode_show.html.twig', [
+            'program' => $program,
+            'episode' => $episode,
+            'season' => $season
+        ]);
+    }
 }
