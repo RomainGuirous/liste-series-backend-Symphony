@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/episode')]
 final class EpisodeController extends AbstractController
@@ -22,14 +23,20 @@ final class EpisodeController extends AbstractController
         ]);
     }
 
+    
     #[Route('/new', name: 'app_episode_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $episode = new Episode();
+        //le formulaire renvoyé n'est pas validé car le champ "slug" est vide, on lui donne une valeur de base à la création de l'objet à hydrater, pour pouvoir le modifier après
+        $episode->setSlug($slugger->slug("default"));
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            //ici on donne la valeur qu'on veut réellement pour "slug"
+            $episode->setSlug($slugger->slug($episode->getTitle()));
+
             $entityManager->persist($episode);
             $entityManager->flush();
 
@@ -45,7 +52,7 @@ final class EpisodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_episode_show', methods: ['GET'])]
+    #[Route('/{slug}', name: 'app_episode_show', methods: ['GET'])]
     public function show(Episode $episode): Response
     {
         return $this->render('episode/show.html.twig', [
@@ -53,13 +60,15 @@ final class EpisodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Episode $episode, EntityManagerInterface $entityManager): Response
+    #[Route('/{slug}/edit', name: 'app_episode_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Episode $episode, EntityManagerInterface $entityManager,SluggerInterface $slugger): Response
     {
         $form = $this->createForm(EpisodeType::class, $episode);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $episode->setSlug($slugger->slug($episode->getTitle()));
+
             $entityManager->flush();
 
             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message

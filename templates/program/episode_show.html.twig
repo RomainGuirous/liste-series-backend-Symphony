@@ -10,7 +10,7 @@
         <p>Resumé : {{ episode.synopsis }}</p>
     </article>
 
-    <a href="{{ path('program_season_show', { program: program.id , season: season.id}) }}">
+    <a href="{{ path('program_season_show', { program_slug: program.slug , season_number: season.number}) }}">
         Retour à la fiche de la saison
     </a>
 {% endblock %}
