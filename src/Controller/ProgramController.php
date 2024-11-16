@@ -2,19 +2,35 @@
 // src/Controller/ProgramController.php
 namespace App\Controller;
 
-use App\Entity\Program;
-use App\Entity\Season;
-use App\Entity\Episode;
-use App\Repository\ProgramRepository;
+//attributs de base
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
+//utliser les objets entity
+use App\Entity\Program;
+use App\Entity\Season;
+use App\Entity\Episode;
+
+//on va utiliser repository pour créer des fonctions particulère (l'équivalent de Method)
+use App\Repository\ProgramRepository;
+
+//pour formulaire
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use App\Form\ProgramType;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\Request;
+
+
+//pour utiliser le param converter et instancier le routing
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+
+//des services
 use App\Service\ProgramDuration;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
+//pour mail
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -32,7 +48,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, MailerInterface $mailer): Response
     {
         // Create a new Program Object
         $program = new program();
@@ -59,6 +75,14 @@ class ProgramController extends AbstractController
 
             //execute insertion en BDD
             $entityManager->flush();
+
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('test _email@example.com')
+                ->subject('Une nouvelle série vient d\'être publiée !')
+                ->html(($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program])));
+
+            $mailer->send($email);
 
             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
             $this->addFlash('success', 'The new program has been created');
