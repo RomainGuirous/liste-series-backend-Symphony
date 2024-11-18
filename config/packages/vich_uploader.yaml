@@ -1,0 +1,14 @@
+vich_uploader:
+    db_driver: orm
+    
+    #metadata spécifie que la configuration se fera via les attributs PHP
+    metadata:
+        type: attribute
+    
+    mappings:
+        #nom de notre mapping
+        poster_file:
+            uri_prefix: /uploads/images/posters
+            #upload_directory défini  dans services.yaml
+            upload_destination: '%upload_directory%'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

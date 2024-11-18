@@ -15,6 +15,9 @@
                 <th>Name</th>
                 <td>{{ actor.name }}</td>
             </tr>
+            <tr>
+                <img src="{{ actor.id }}" alt="{{ actor.name }}">
+            </tr>
         </tbody>
     </table>
 
@@ -22,16 +25,17 @@
     <ul>
         {% for program in programs %}
             <li>
-                <a href="{{ path('program_show' , { id: program.id} ) }}">
+                <a href="{{ path('program_show' , { slug: program.slug } ) }}">
                     {{ program.title }}
                 </a>
             </li>
         {% endfor %}
     </ul>
 
-    <a href="{{ path('app_actor_index') }}">back to list</a>
+    <a href="{{ path('app_actor_index') }}">Back To List</a>
+    <br>
 
-    <a href="{{ path('app_actor_edit', {'id': actor.id}) }}">edit</a>
+    <a href="{{ path('app_actor_edit', {'id': actor.id}) }}">Edit</a>
 
     {{ include('actor/_delete_form.html.twig') }}
 {% endblock %}

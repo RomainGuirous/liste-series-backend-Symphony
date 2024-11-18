@@ -60,8 +60,6 @@ class ProgramController extends AbstractController
         // Get data from HTTP request
         $form->handleRequest($request);
 
-        
-
         // Was the form submitted ?
         if ($form->isSubmitted() && $form->isValid()) {
             // Deal with the submitted data
@@ -76,13 +74,14 @@ class ProgramController extends AbstractController
             //execute insertion en BDD
             $entityManager->flush();
 
-            $email = (new Email())
-                ->from($this->getParameter('mailer_from'))
-                ->to('test _email@example.com')
-                ->subject('Une nouvelle série vient d\'être publiée !')
-                ->html(($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program])));
+            //pour envoyer mail
+            // $email = (new Email())
+            //     ->from($this->getParameter('mailer_from'))
+            //     ->to('test _email@example.com')
+            //     ->subject('Une nouvelle série vient d\'être publiée !')
+            //     ->html(($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program])));
 
-            $mailer->send($email);
+            // $mailer->send($email);
 
             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
             $this->addFlash('success', 'The new program has been created');
