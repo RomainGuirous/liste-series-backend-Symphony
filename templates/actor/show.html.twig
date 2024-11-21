@@ -5,6 +5,8 @@
 {% block body %}
     <h1>Actor</h1>
 
+    <img src="{{ vich_uploader_asset(actor) }}" alt="{{ actor.name }}">
+
     <table class="table">
         <tbody>
             <tr>
@@ -14,9 +16,6 @@
             <tr>
                 <th>Name</th>
                 <td>{{ actor.name }}</td>
-            </tr>
-            <tr>
-                <img src="{{ actor.id }}" alt="{{ actor.name }}">
             </tr>
         </tbody>
     </table>

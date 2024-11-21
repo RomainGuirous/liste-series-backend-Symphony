@@ -12,3 +12,9 @@ vich_uploader:
             #upload_directory défini  dans services.yaml
             upload_destination: '%upload_directory%'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+        photo_file:
+            uri_prefix: /uploads/images/actorPhoto
+            #upload_directory défini  dans services.yaml
+            upload_destination: '%upload_photo%'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

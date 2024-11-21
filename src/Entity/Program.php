@@ -210,6 +210,7 @@ class Program
 
         return $this;
     }
+    
     public function setPosterFile(File $image = null): Program
     {
         $this->posterFile = $image;

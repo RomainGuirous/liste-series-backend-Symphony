@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Program;
 use App\Entity\Season;
 use App\Entity\Episode;
+use App\Entity\Comment;
+use App\Entity\User;
 
 //on va utiliser repository pour créer des fonctions particulère (l'équivalent de Method)
 use App\Repository\ProgramRepository;
@@ -18,6 +20,8 @@ use App\Repository\ProgramRepository;
 //pour formulaire
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ProgramType;
+use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -53,7 +57,7 @@ class ProgramController extends AbstractController
         // Create a new Program Object
         $program = new program();
         $program->setSlug($slugger->slug("bidule"));
-        
+
         // Create the associated Form
         $form = $this->createForm(ProgramType::class, $program);
 
@@ -67,7 +71,7 @@ class ProgramController extends AbstractController
             // And redirect to a route that display the result
 
             $program->setSlug($slugger->slug($program->getTitle()));
-            
+
             //sauvegarde nouvelle entité
             $entityManager->persist($program);
 
@@ -127,7 +131,7 @@ class ProgramController extends AbstractController
 
             // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
             $this->addFlash('success', 'The program has been edited');
-            
+
             return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -136,7 +140,7 @@ class ProgramController extends AbstractController
             'form' => $form,
         ]);
     }
-    
+
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Program $program, EntityManagerInterface $entityManager): Response
     {
@@ -156,8 +160,7 @@ class ProgramController extends AbstractController
     public function showSeason(
         #[MapEntity(mapping: ['program_slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_number' => 'number'])] Season $season,
-        ): Response
-    {
+    ): Response {
         //obtention des épisodes
         $episodes = $season->getEpisodes();
 
@@ -169,17 +172,59 @@ class ProgramController extends AbstractController
     }
 
     //affichage d'un épisode avec ses infos
-    #[Route('/{program_slug}/season/{season_number}/episode{episode_slug}', methods: ['GET'], name: 'episode_show')]
+    #[Route('/{program_slug}/season/{season_number}/episode{episode_slug}', methods: ['GET', 'POST'], name: 'episode_show')]
     public function showEpisode(
         #[MapEntity(mapping: ['program_slug' => 'slug'])] Program $program,
         #[MapEntity(mapping: ['season_number' => 'number'])] Season $season,
-        #[MapEntity(mapping: ['episode_slug' => 'slug'])] Episode $episode
-        ): Response
-    {
-        return $this->render('program/episode_show.html.twig', [
-            'program' => $program,
-            'episode' => $episode,
-            'season' => $season
-        ]);
+        #[MapEntity(mapping: ['episode_slug' => 'slug'])] Episode $episode,
+        Request $request,
+        EntityManagerInterface $entityManager, CommentRepository $commentRepository,
+    ): Response {
+        //si l'utilisateur est connecté il pourra accéder au formulaire comment
+        $user = $this->getUser();
+
+        $comments = $commentRepository->findCommentByEpisodeDesc($episode->getId());
+
+        if ($user) {
+
+            $comment = new Comment();
+            $comment->setEpisode($episode);
+            $comment->setAuthor($user);
+
+            $form = $this->createForm(CommentType::class, $comment);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+
+                $entityManager->persist($comment);
+                $entityManager->flush();
+
+                // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+                $this->addFlash('success', 'The comment has been created');
+
+                return $this->redirectToRoute(
+                    'program_season_show',
+                    ['program_slug' => $program->getSlug(), 'season_number' => $season->getNumber()],
+                    Response::HTTP_SEE_OTHER
+                );
+                echo ('ça bide');
+            }
+
+            return $this->render('program/episode_show.html.twig', [
+                'program' => $program,
+                'episode' => $episode,
+                'season' => $season,
+                'form' => $form,
+                'comments' => $comments
+            ]);
+            //si l'utilisateur n'est pas connecté il aura accès à la page normale sans formulaire de commentaire
+        } else {
+            return $this->render('program/episode_show.html.twig', [
+                'program' => $program,
+                'episode' => $episode,
+                'season' => $season,
+                'comments' => $comments
+            ]);
+        }
     }
 }

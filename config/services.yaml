@@ -10,6 +10,8 @@ parameters:
     #précise où seront conserver les futurs dossiers chargés
     upload_directory: '%kernel.project_dir%/public/uploads/images/posters/'
 
+    upload_photo: '%kernel.project_dir%/public/uploads/images/actorPhoto/'
+
 services:
     # default configuration for services in *this* file
     _defaults:

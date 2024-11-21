@@ -33,6 +33,8 @@ final class ActorController extends AbstractController
             $entityManager->persist($actor);
             $entityManager->flush();
 
+            $this->addFlash('success', $actor->getName() . ' has been added');
+
             return $this->redirectToRoute('app_actor_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -62,6 +64,8 @@ final class ActorController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', $actor->getName() . ' has been modified');
+
             return $this->redirectToRoute('app_actor_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -77,6 +81,8 @@ final class ActorController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$actor->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($actor);
             $entityManager->flush();
+
+            $this->addFlash('danger', $actor->getName() . ' has been deleted');
         }
 
         return $this->redirectToRoute('app_actor_index', [], Response::HTTP_SEE_OTHER);
