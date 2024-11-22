@@ -25,7 +25,7 @@ class CommentRepository extends ServiceEntityRepository
             FROM comment INNER JOIN user
             ON comment.author_id = user.id
             WHERE comment.episode_id = :episodeId
-            ORDER BY comment.id DESC
+            ORDER BY comment.id
             ';
 
         $resultSet = $conn->executeQuery($sql, [
