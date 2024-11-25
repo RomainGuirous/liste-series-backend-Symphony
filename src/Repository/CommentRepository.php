@@ -21,7 +21,7 @@ class CommentRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT comment.rate, comment.comment, user.email 
+            SELECT comment.id as comment_id, user.id as user_id, comment.*, user.* 
             FROM comment INNER JOIN user
             ON comment.author_id = user.id
             WHERE comment.episode_id = :episodeId

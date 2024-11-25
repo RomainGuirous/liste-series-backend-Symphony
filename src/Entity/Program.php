@@ -82,6 +82,10 @@ class Program
     #[Assert\NotBlank(message: 'slug vide')]
     private ?string $slug = null;
 
+    #[ORM\ManyToOne(inversedBy: 'programs')]
+    #[Assert\NotNull(message: 'owner vide')]
+    private ?User $owner = null;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
@@ -234,6 +238,18 @@ class Program
     public function setUpdatedAt(?string $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

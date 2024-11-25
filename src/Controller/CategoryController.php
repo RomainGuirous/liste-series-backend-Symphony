@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\Security\Http\Attribute\IsGranted;    
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -30,6 +31,7 @@ class CategoryController extends AbstractController
 
     //affiche un formulaire pour créer une nouvelle catégorie (et l'injecte en BDD)
     #[Route('/new', name: 'new')]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Create a new Category Object

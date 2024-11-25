@@ -11,6 +11,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+    //nombre d'objet user
+    public const NUMBER_USER = 2;
+    
     private SluggerInterface $slugger;
 
     public function __construct(SluggerInterface $slugger)
@@ -28,6 +31,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setTitle($faker->words(3, true));
             $program->setSynopsis($faker->paragraphs(2, true));
             $program->setCategory($this->getReference('category_' . $faker->numberBetween(1, 5)));
+            $program->setOwner($this->getReference('user_' . $faker->numberBetween(1, self::NUMBER_USER)));
+            
 
             $program->setSlug($this->slugger->slug($program->getTitle()));
 

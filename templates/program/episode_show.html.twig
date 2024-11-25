@@ -15,10 +15,18 @@
             <p>Auteur : {{ comment.email }}</p>
             <p>{{ comment.comment }}</p>
             <p>Note : {{ comment.rate }}</p>
+
+            {% if app.user %}
+                {% if (is_granted("ROLE_ADMIN")) or comment.author_id == app.user.id %}
+                    {{ include('program/_delete_comment.html.twig') }}
+                {% endif %}
+                
+            {% endif %}
+
         {% endfor %}
     </article>
 
-    {% if app.user %}
+    {% if is_granted("ROLE_CONTRIBUTOR")%}
         <h5>Ajouter un commentaire</h5>
         {{ include('program/_form.html.twig', {'button_label': 'Comment'}) }}
     {% else %}

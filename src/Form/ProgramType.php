@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 //pour spécifier le type dans le champ du formulaire (fort recommandé car il se trompe souvent sans)
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 // use Symfony\Component\Form\Extension\Core\Type\UrlType;
 
 //pour faire le lien avec d'autres classes/colonnes
@@ -24,7 +25,7 @@ class ProgramType extends AbstractType
     {
         $builder
             ->add('title', TextType::class)
-            ->add('synopsis', TextType::class)
+            ->add('synopsis', TextareaType::class)
             // ->add('poster', UrlType::class) maintenant géré par posterFile
             ->add('category', EntityType::class, [
                 'class' => Category::class,

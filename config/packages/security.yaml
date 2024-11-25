@@ -1,4 +1,12 @@
 security:
+    
+    # il existe par défaut un role ROLE_USER pour tous les utilisateurs
+    role_hierarchy: 
+        # ROLE_CONTRIBUTOR possède tous les droits de ROLE_USER
+        ROLE_CONTRIBUTOR: ROLE_USER
+        # ROLE_ADMIN possède tous les droits de ROLE_CONTRIBUTOR (et donc de ROLE_USER)
+        ROLE_ADMIN: ROLE_CONTRIBUTOR
+    
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         
@@ -40,8 +48,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/program/new, roles: ROLE_CONTRIBUTOR }
+        - { path: ^/program/[a-zA-Z_0-9-]+/edit, roles: ROLE_CONTRIBUTOR }
 
 when@test:
     security:

@@ -36,6 +36,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
+
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
@@ -56,7 +57,10 @@ class ProgramController extends AbstractController
     {
         // Create a new Program Object
         $program = new program();
-        $program->setSlug($slugger->slug("bidule"));
+
+        //rentrer une valeur par défaut pour pouvoir passer le isValid()
+        $program->setSlug($slugger->slug("default"));
+        $program->setOwner($this->getUser());
 
         // Create the associated Form
         $form = $this->createForm(ProgramType::class, $program);
@@ -120,6 +124,11 @@ class ProgramController extends AbstractController
     #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Program $program, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+        if ($this->getUser() !== $program->getOwner()) {
+            // If not the owner, throws a 403 Access Denied exception
+            throw $this->createAccessDeniedException('Only the owner can edit the program!');
+        }
+
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
 
@@ -178,53 +187,59 @@ class ProgramController extends AbstractController
         #[MapEntity(mapping: ['season_number' => 'number'])] Season $season,
         #[MapEntity(mapping: ['episode_slug' => 'slug'])] Episode $episode,
         Request $request,
-        EntityManagerInterface $entityManager, CommentRepository $commentRepository,
+        EntityManagerInterface $entityManager,
+        CommentRepository $commentRepository,
     ): Response {
         //si l'utilisateur est connecté il pourra accéder au formulaire comment
         $user = $this->getUser();
 
-        $comments = $commentRepository->findCommentByEpisodeDesc($episode->getId());
+        //tous les commentaires d'un épisode
+        $commentsList = $commentRepository->findCommentByEpisodeDesc($episode->getId());
 
-        if ($user) {
+        $comment = new Comment();
+        $comment->setEpisode($episode);
+        $comment->setAuthor($user);
 
-            $comment = new Comment();
-            $comment->setEpisode($episode);
-            $comment->setAuthor($user);
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
 
-            $form = $this->createForm(CommentType::class, $comment);
-            $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($comment);
+            $entityManager->flush();
 
-                $entityManager->persist($comment);
-                $entityManager->flush();
+            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+            $this->addFlash('success', 'The comment has been created');
 
-                // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
-                $this->addFlash('success', 'The comment has been created');
-
-                return $this->redirectToRoute(
-                    'program_season_show',
-                    ['program_slug' => $program->getSlug(), 'season_number' => $season->getNumber()],
-                    Response::HTTP_SEE_OTHER
-                );
-                echo ('ça bide');
-            }
-
-            return $this->render('program/episode_show.html.twig', [
-                'program' => $program,
-                'episode' => $episode,
-                'season' => $season,
-                'form' => $form,
-                'comments' => $comments
-            ]);
-            //si l'utilisateur n'est pas connecté il aura accès à la page normale sans formulaire de commentaire
-        } else {
-            return $this->render('program/episode_show.html.twig', [
-                'program' => $program,
-                'episode' => $episode,
-                'season' => $season,
-                'comments' => $comments
-            ]);
+            return $this->redirectToRoute(
+                'program_season_show',
+                ['program_slug' => $program->getSlug(), 'season_number' => $season->getNumber()],
+                Response::HTTP_SEE_OTHER
+            );
         }
+
+        return $this->render('program/episode_show.html.twig', [
+            'program' => $program,
+            'episode' => $episode,
+            'season' => $season,
+            'form' => $form,
+            'comments' => $commentsList
+        ]);
+        //si l'utilisateur n'est pas connecté il aura accès à la page normale sans formulaire de commentaire
+    }
+
+    #[Route('/comment/{id}', methods: ['POST'], name: 'comment_delete')]
+    public function commentDelete(Comment $comment,Request $request,EntityManagerInterface $entityManager): Response {
+
+            if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->getPayload()->getString('_token'))) {
+                $entityManager->remove($comment);
+                $entityManager->flush();
+            }
+    
+            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+            $this->addFlash('danger', 'The comment has been deleted');
+    
+            return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+
     }
 }
