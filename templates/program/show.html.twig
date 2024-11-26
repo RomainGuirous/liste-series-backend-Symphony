@@ -29,7 +29,7 @@
                 <th>Saisons</th>
                 <td>
                     {% for season in seasons %} 
-                        <a href="{{ path('program_season_show', { program_slug: program.slug , season_number: season.number }) }}">
+                        <a href="{{ path('program_season_show', { program_slug: program.slug , season_id: season.id }) }}">
                             Saison {{ season.number }}
                         </a>
                     {% else %}

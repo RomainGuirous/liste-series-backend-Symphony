@@ -165,10 +165,10 @@ class ProgramController extends AbstractController
     }
 
     //affichage d'une saison, ses infos et ses épisodes
-    #[Route('/{program_slug}/season/{season_number}', methods: ['GET'], name: 'season_show')]
+    #[Route('/{program_slug}/season/{season_id}', methods: ['GET'], name: 'season_show')]
     public function showSeason(
         #[MapEntity(mapping: ['program_slug' => 'slug'])] Program $program,
-        #[MapEntity(mapping: ['season_number' => 'number'])] Season $season,
+        #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
     ): Response {
         //obtention des épisodes
         $episodes = $season->getEpisodes();
@@ -181,10 +181,10 @@ class ProgramController extends AbstractController
     }
 
     //affichage d'un épisode avec ses infos
-    #[Route('/{program_slug}/season/{season_number}/episode{episode_slug}', methods: ['GET', 'POST'], name: 'episode_show')]
+    #[Route('/{program_slug}/season/{season_id}/episode{episode_slug}', methods: ['GET', 'POST'], name: 'episode_show')]
     public function showEpisode(
         #[MapEntity(mapping: ['program_slug' => 'slug'])] Program $program,
-        #[MapEntity(mapping: ['season_number' => 'number'])] Season $season,
+        #[MapEntity(mapping: ['season_id' => 'id'])] Season $season,
         #[MapEntity(mapping: ['episode_slug' => 'slug'])] Episode $episode,
         Request $request,
         EntityManagerInterface $entityManager,
@@ -213,7 +213,7 @@ class ProgramController extends AbstractController
 
             return $this->redirectToRoute(
                 'program_season_show',
-                ['program_slug' => $program->getSlug(), 'season_number' => $season->getNumber()],
+                ['program_slug' => $program->getSlug(), 'season_id' => $season->getId()],
                 Response::HTTP_SEE_OTHER
             );
         }
@@ -234,12 +234,23 @@ class ProgramController extends AbstractController
             if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->getPayload()->getString('_token'))) {
                 $entityManager->remove($comment);
                 $entityManager->flush();
+
+                // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+                $this->addFlash('danger', 'The comment has been deleted');
+    
+                //pour créer la redirection à la liste des épisodes
+                $episode = $comment->getEpisode();
+                $season = $episode->getSeason();
+                $program = $season->getProgram();
+    
+        
+                return $this->redirectToRoute(
+                    'program_season_show',
+                    ['program_slug' => $program->getSlug(), 'season_id' => $season->getId()],
+                    Response::HTTP_SEE_OTHER
+                );
             }
     
-            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
-            $this->addFlash('danger', 'The comment has been deleted');
-    
-            return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
 
     }
 }

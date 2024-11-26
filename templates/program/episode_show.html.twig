@@ -12,17 +12,19 @@
 
     <article>
         {% for comment in comments %}
+        ---------------------------------------------------------------------
             <p>Auteur : {{ comment.email }}</p>
             <p>{{ comment.comment }}</p>
             <p>Note : {{ comment.rate }}</p>
 
+        ---------------------------------------------------------------------
             {% if app.user %}
                 {% if (is_granted("ROLE_ADMIN")) or comment.author_id == app.user.id %}
                     {{ include('program/_delete_comment.html.twig') }}
                 {% endif %}
                 
             {% endif %}
-
+        <br>
         {% endfor %}
     </article>
 
@@ -33,7 +35,7 @@
         <p>Pour ajouter un commentaire, se connecter</p>    
     {% endif %}
 
-    <a href="{{ path('program_season_show', { program_slug: program.slug , season_number: season.number}) }}">
+    <a href="{{ path('program_season_show', { program_slug: program.slug , season_id: season.id}) }}">
         Retour à la fiche de la saison
     </a>
 {% endblock %}
