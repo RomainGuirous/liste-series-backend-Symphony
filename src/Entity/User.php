@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Config\SecurityConfig;
 
 use App\Repository\UserRepository;
@@ -13,12 +14,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private ?string $pseudo = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
@@ -56,6 +61,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -166,7 +182,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->programs;
     }
 
-    public function addProgram(Program $program): static
+    public function addPrograms(Program $program): static
     {
         if (!$this->programs->contains($program)) {
             $this->programs->add($program);
@@ -176,7 +192,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeProgram(Program $program): static
+    public function removePrograms(Program $program): static
     {
         if ($this->programs->removeElement($program)) {
             // set the owning side to null (unless already changed)

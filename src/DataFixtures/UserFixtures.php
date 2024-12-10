@@ -22,6 +22,7 @@ class UserFixtures extends Fixture
     {
         //config contributor
         $contributor = new User();
+        $contributor->setPseudo('Contributor');
         $contributor->setEmail('contributor@mail.com');
         $contributor->setRoles(['ROLE_CONTRIBUTOR']);
         $hashedPassword = $this->passwordHasher->hashPassword(
@@ -34,6 +35,7 @@ class UserFixtures extends Fixture
         
         //config admin
         $admin = new User();
+        $admin->setPseudo('Admin');
         $admin->setEmail('admin@mail.com');
         $admin->setRoles(['ROLE_ADMIN']);
         $hashedPassword = $this->passwordHasher->hashPassword(
