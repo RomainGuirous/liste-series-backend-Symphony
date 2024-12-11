@@ -20,6 +20,7 @@ use App\Repository\ProgramRepository;
 //pour formulaire
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ProgramType;
+use App\Form\SearchProgramType;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 //des services
 use App\Service\ProgramDuration;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 //pour mail
@@ -41,14 +43,24 @@ use Symfony\Component\Mime\Email;
 class ProgramController extends AbstractController
 {
     //affichage des séries et de leurs infos
-    #[Route('/', name: 'index')]
-    public function index(ProgramRepository $programRepository): Response
+    #[Route('/', name: 'index', methods: ['GET', 'POST'])]
+    public function index(Request $request, ProgramRepository $programRepository): Response
     {
-        //obtient tous les programmes
-        $programs = $programRepository->findAll();
+        $form = $this->createForm(SearchProgramType::class);
+
+        dump($request);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()){
+            $search = $form->getData()['search'];
+            $programs = $programRepository->findBy(['title' => $search]);
+        } else {
+            $programs = $programRepository->findAll();
+        }
 
         return $this->render('program/index.html.twig', [
-            'programs' => $programs
+            'programs' => $programs,
+            'form' => $form,
         ]);
     }
 
@@ -229,28 +241,27 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/comment/{id}', methods: ['POST'], name: 'comment_delete')]
-    public function commentDelete(Comment $comment,Request $request,EntityManagerInterface $entityManager): Response {
+    public function commentDelete(Comment $comment, Request $request, EntityManagerInterface $entityManager): Response
+    {
 
-            if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->getPayload()->getString('_token'))) {
-                $entityManager->remove($comment);
-                $entityManager->flush();
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($comment);
+            $entityManager->flush();
 
-                // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
-                $this->addFlash('danger', 'The comment has been deleted');
-    
-                //pour créer la redirection à la liste des épisodes
-                $episode = $comment->getEpisode();
-                $season = $episode->getSeason();
-                $program = $season->getProgram();
-    
-        
-                return $this->redirectToRoute(
-                    'program_season_show',
-                    ['program_slug' => $program->getSlug(), 'season_id' => $season->getId()],
-                    Response::HTTP_SEE_OTHER
-                );
-            }
-    
+            // Once the form is submitted, valid and the data inserted in database, you can define the success flash message
+            $this->addFlash('danger', 'The comment has been deleted');
 
+            //pour créer la redirection à la liste des épisodes
+            $episode = $comment->getEpisode();
+            $season = $episode->getSeason();
+            $program = $season->getProgram();
+
+
+            return $this->redirectToRoute(
+                'program_season_show',
+                ['program_slug' => $program->getSlug(), 'season_id' => $season->getId()],
+                Response::HTTP_SEE_OTHER
+            );
+        }
     }
 }
