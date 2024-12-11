@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <a href="{{ path('app_logout') }}"> Se déconnecter</a>
+    <p>Utilisateur : {{ app.user.pseudo }}</p>
+    <ul>
+        Séries créées :
+        {% for program in programs %}
+            <li><a href="{{ path('program_show', {slug:program.slug}) }}"> {{ program.title }}</a></li>
+            {# {{ dump(program) }} #}
+            
+        {% endfor %}
+    </ul>
+{% endblock %}

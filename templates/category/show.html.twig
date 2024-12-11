@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categorie : {{ category.name }}{% endblock %}
+
+{% block body %}
+    <h1>Categorie : {{ category.name }}</h1>
+    {% if programs %}
+        <article>
+            {% for program in programs %}
+                <article>
+                    <h2>Titre : {{program.title}}</h2>
+                    <p>ID : {{program.id}}</p>
+                    <a href="{{ path('program_show', { id: program.id }) }}">
+                        Voir fiche film
+                    </a>
+                    <p>Résumé : {{program.synopsis}}</p>
+                </article>
+            {% endfor %}
+        </article>
+    {% else %}
+        <h2>Aucune série trouvée</h2>    
+    {% endif %}
+
+    <a href="{{ path('category_index') }}">
+        Retour à la liste des catégories
+    </a>
+
+    {{ include('category/_delete_form.html.twig') }}
+{% endblock %}

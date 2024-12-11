@@ -2,9 +2,16 @@
 
 {% block title %}Wild Series{% endblock %}
 
-{% block stylesheets %}
-{% endblock %}
+{% block stylesheets %}{% endblock %}
 
 {% block body %}
-<h1>Bienvenue!</h1>
+    <h1>Bienvenue!</h1>
+
+    <h3><a href="{{ path('program_index') }}">
+        Programmes
+    </a></h3>
+
+    <h3><a href="{{ path('category_index') }}">
+        Categories
+    </a></h3>
 {% endblock %}
