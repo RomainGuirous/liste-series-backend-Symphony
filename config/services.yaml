@@ -6,6 +6,8 @@
 parameters:
     #permet d'appeler la variable MAILER_FROM_ADRESS, définie dans le env.local, dans le controller avec $this->getParameter('mailer_from')
     mailer_from: '%env(resolve:MAILER_FROM_ADDRESS)%'
+    # config Guillaume
+    # symfony.web_link.preload: false
 
     #précise où seront conserver les futurs dossiers chargés
     upload_directory: '%kernel.project_dir%/public/uploads/images/posters/'

@@ -1,4 +1,5 @@
-import './bootstrap.js';
+// désactiver l'import permet de déactiver Turbo
+// import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *
