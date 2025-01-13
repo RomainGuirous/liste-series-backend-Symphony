@@ -10,7 +10,7 @@
                 <article>
                     <h2>Titre : {{program.title}}</h2>
                     <p>ID : {{program.id}}</p>
-                    <a href="{{ path('program_show', { id: program.id }) }}">
+                    <a href="{{ path('program_show', { slug: program.slug }) }}">
                         Voir fiche film
                     </a>
                     <p>Résumé : {{program.synopsis}}</p>
